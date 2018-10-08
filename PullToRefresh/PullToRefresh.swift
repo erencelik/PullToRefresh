@@ -27,10 +27,10 @@ open class PullToRefresh: NSObject {
     
     open var position: Position = .top
     
-    open var animationDuration: TimeInterval = 1
+    open var animationDuration: TimeInterval = 0.4
     open var hideDelay: TimeInterval = 0
-    open var springDamping: CGFloat = 0.4
-    open var initialSpringVelocity: CGFloat = 0.8
+    open var springDamping: CGFloat = 1
+    open var initialSpringVelocity: CGFloat = 0
     open var animationOptions: UIViewAnimationOptions = [.curveLinear]
     open var shouldBeVisibleWhileScrolling: Bool = false
     
@@ -162,7 +162,6 @@ extension PullToRefresh {
             case 0 where (state != .loading): state = .initial
             case -refreshViewHeight...0 where (state != .loading && state != .finished):
                 state = .releasing(progress: -offset / refreshViewHeight)
-                
             case -1000...(-refreshViewHeight):
                 if state == .releasing(progress: 1) && scrollView?.isDragging == false {
                     state = .loading
@@ -268,27 +267,23 @@ private extension PullToRefresh {
     }
     
     func animateLoadingState() {
-        guard !isOppositeRefresherLoading, let scrollView = scrollView else {
-            return
-        }
-        
-        scrollView.contentOffset = previousScrollViewOffset
-        scrollView.bounces = false
-        UIView.animate(
-            withDuration: 0.3,
+        guard !isOppositeRefresherLoading, let scrollView = scrollView else { return }
+        //scrollView.bounces = false
+        UIView.animate (
+            withDuration: 0.25,
             animations: {
                 switch self.position {
                 case .top:
-                    let insetY = self.refreshView.frame.height + self.scrollViewDefaultInsets.top
-                    scrollView.contentInset.top = insetY
-                    scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: -insetY)
+                    let topInset = self.refreshView.frame.height + self.scrollViewDefaultInsets.top
+                    scrollView.contentInset.top = topInset
+                    scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: -topInset)
                 case .bottom:
-                    let insetY = self.refreshView.frame.height + self.scrollViewDefaultInsets.bottom
-                    scrollView.contentInset.bottom = insetY
+                    let bottomInset = self.refreshView.frame.height + self.scrollViewDefaultInsets.bottom
+                    scrollView.contentInset.bottom = bottomInset
                 }
             },
             completion: { _ in
-                scrollView.bounces = true
+                //scrollView.bounces = true
                 if self.shouldBeVisibleWhileScrolling {
                     self.bringRefreshViewToSuperview()
                 }

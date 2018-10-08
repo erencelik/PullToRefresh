@@ -34,6 +34,7 @@ public extension UIScrollView {
     }
     
     func addPullToRefresh(_ pullToRefresh: PullToRefresh, action: @escaping () -> ()) {
+        guard let superview = superview else { return }
         pullToRefresh.scrollView = self
         pullToRefresh.action = action
         
@@ -51,8 +52,8 @@ public extension UIScrollView {
         
         view.frame = defaultFrame(forPullToRefresh: pullToRefresh)
         
-        addSubview(view)
-        sendSubview(toBack: view)
+        superview.addSubview(view)
+        superview.sendSubview(toBack: view)
     }
     
     func refresher(at position: Position) -> PullToRefresh? {
@@ -153,7 +154,7 @@ internal extension UIScrollView {
         var originY: CGFloat
         switch pullToRefresh.position {
         case .top:
-            originY = -view.frame.size.height
+            originY = 0
         case .bottom:
             originY = contentSize.height
         }
