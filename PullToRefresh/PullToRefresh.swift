@@ -119,7 +119,7 @@ open class PullToRefresh: NSObject {
         self.init(refreshView: refreshView, animator: DefaultViewAnimator(refreshView: refreshView), height: height, position: position)
     }
     
-    func startRefreshing() {
+    public func startRefreshing() {
         guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
             return
         }
@@ -149,7 +149,7 @@ open class PullToRefresh: NSObject {
         scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
     }
     
-    func endRefreshing() {
+    public func endRefreshing() {
         if state == .loading {
             state = .finished
         }
