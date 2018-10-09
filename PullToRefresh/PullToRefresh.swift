@@ -211,7 +211,7 @@ extension PullToRefresh {
 }
 
 // MARK: - Start/End Refreshin
-extension PullToRefresh {
+public extension PullToRefresh {
     
     func startRefreshing() {
         guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
