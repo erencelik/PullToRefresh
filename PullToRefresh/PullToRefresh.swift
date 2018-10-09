@@ -119,10 +119,47 @@ open class PullToRefresh: NSObject {
         self.init(refreshView: refreshView, animator: DefaultViewAnimator(refreshView: refreshView), height: height, position: position)
     }
     
+    func startRefreshing() {
+        guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
+            return
+        }
+        
+        let topInset: CGFloat = {
+            if #available(iOS 11, *) {
+                return scrollView.safeAreaInsets.top
+            }
+            return 0
+        }()
+        
+        var offsetY: CGFloat
+        switch position {
+        case .top:
+            offsetY = -refreshView.frame.height - scrollViewDefaultInsets.top - topInset
+        case .bottom:
+            if scrollView.contentSize.height + refreshView.frame.height > scrollView.frame.height {
+                offsetY = scrollView.contentSize.height
+                    + refreshView.frame.height
+                    + scrollViewDefaultInsets.bottom
+                    - scrollView.bounds.height
+            } else {
+                offsetY = 0 - topInset
+            }
+        }
+        state = .loading
+        scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
+    }
+    
+    func endRefreshing() {
+        if state == .loading {
+            state = .finished
+        }
+    }
+    
     deinit {
         scrollView?.removePullToRefresh(at: position)
         removeScrollViewObserving()
     }
+    
 }
 
 // MARK: KVO
@@ -206,42 +243,6 @@ extension PullToRefresh {
         scrollView.removeObserver(self, forKeyPath: KVO.ScrollViewPath.contentInset, context: &KVO.context)
         
         isObserving = false
-    }
-    
-    func startRefreshing() {
-        guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
-            return
-        }
-        
-        let topInset: CGFloat = {
-            if #available(iOS 11, *) {
-                return scrollView.safeAreaInsets.top
-            }
-            return 0
-        }()
-        
-        var offsetY: CGFloat
-        switch position {
-        case .top:
-            offsetY = -refreshView.frame.height - scrollViewDefaultInsets.top - topInset
-        case .bottom:
-            if scrollView.contentSize.height + refreshView.frame.height > scrollView.frame.height {
-                offsetY = scrollView.contentSize.height
-                    + refreshView.frame.height
-                    + scrollViewDefaultInsets.bottom
-                    - scrollView.bounds.height
-            } else {
-                offsetY = 0 - topInset
-            }
-        }
-        state = .loading
-        scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
-    }
-    
-    func endRefreshing() {
-        if state == .loading {
-            state = .finished
-        }
     }
     
 }
