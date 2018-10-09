@@ -11,4 +11,7 @@ import Foundation
 public protocol RefreshViewAnimator {
     
     func animate(_ state: State)
+    
+    func beforeFinishAnimations(_ completion: (() -> ())?)
+    
 }

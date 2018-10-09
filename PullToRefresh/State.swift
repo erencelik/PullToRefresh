@@ -6,7 +6,7 @@
 //  Copyright © 2016 Yalantis. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public enum State: Equatable, CustomStringConvertible {
     
@@ -28,9 +28,9 @@ public enum State: Equatable, CustomStringConvertible {
 public func ==(a: State, b: State) -> Bool {
     switch (a, b) {
     case (.initial, .initial): return true
+    case (.releasing, .releasing): return true
     case (.loading, .loading): return true
     case (.finished, .finished): return true
-    case (.releasing, .releasing): return true
     default: return false
     }
 }

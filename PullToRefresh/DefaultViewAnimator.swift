@@ -6,7 +6,7 @@
 //  Copyright © 2016 Yalantis. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class DefaultViewAnimator: RefreshViewAnimator {
     
@@ -35,4 +35,9 @@ class DefaultViewAnimator: RefreshViewAnimator {
         default: break
         }
     }
+    
+    func beforeFinishAnimations(_ completion: (() -> ())?) {
+        completion?()
+    }
+    
 }

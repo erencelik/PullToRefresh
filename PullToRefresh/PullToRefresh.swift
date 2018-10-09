@@ -86,7 +86,6 @@ open class PullToRefresh: NSObject {
                 if oldValue != .loading {
                     animateLoadingState()
                 }
-                
             case .finished:
                 if isCurrentlyVisible {
                     animateFinishedState()
@@ -119,7 +118,7 @@ open class PullToRefresh: NSObject {
         self.init(refreshView: refreshView, animator: DefaultViewAnimator(refreshView: refreshView), height: height, position: position)
     }
     
-    public func startRefreshing() {
+    func startRefreshing() {
         guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
             return
         }
@@ -149,7 +148,7 @@ open class PullToRefresh: NSObject {
         scrollView.setContentOffset(CGPoint(x: 0, y: offsetY), animated: true)
     }
     
-    public func endRefreshing() {
+    func endRefreshing() {
         if state == .loading {
             state = .finished
         }
@@ -290,21 +289,22 @@ private extension PullToRefresh {
     }
     
     func animateFinishedState() {
-        removeScrollViewObserving()
-        UIView.animate(
-            withDuration: animationDuration,
-            delay: hideDelay,
-            usingSpringWithDamping: springDamping,
-            initialSpringVelocity: initialSpringVelocity,
-            options: animationOptions,
-            animations: {
-                self.scrollView?.contentInset = self.scrollViewDefaultInsets
+        animator.beforeFinishAnimations {
+            self.removeScrollViewObserving()
+            UIView.animate(
+                withDuration: self.animationDuration,
+                delay: self.hideDelay,
+                usingSpringWithDamping: self.springDamping,
+                initialSpringVelocity: self.initialSpringVelocity,
+                options: self.animationOptions,
+                animations: {
+                    self.scrollView?.contentInset = self.scrollViewDefaultInsets
             },
-            completion: { _ in
-                self.addScrollViewObserving()
-                self.state = .initial
-            }
-        )
+                completion: { _ in
+                    self.addScrollViewObserving()
+                    self.state = .initial
+            })
+        }
     }
 }
 
