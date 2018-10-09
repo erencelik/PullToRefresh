@@ -208,11 +208,6 @@ extension PullToRefresh {
         isObserving = false
     }
     
-}
-
-// MARK: - Start/End Refreshin
-public extension PullToRefresh {
-    
     func startRefreshing() {
         guard !isOppositeRefresherLoading, state == .initial, let scrollView = scrollView else {
             return
@@ -248,6 +243,7 @@ public extension PullToRefresh {
             state = .finished
         }
     }
+    
 }
 
 // MARK: - Animate scroll view
